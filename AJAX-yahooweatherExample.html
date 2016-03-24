@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<style>
+
+</style>
+
+<head>
+	<meta charset="UTF-8" />
+	<title> Yahoo Weather using AJAX
+	</title>
+</head>
+
+<body>
+
+	<h1> Yahoo Weather using AJAX </h1>
+
+	<form>
+		<table>
+			<tr>
+				<td> ENTER THE ZIP CODE:
+				</td>
+				<td> <input type="text" size="20" name="get_zip" id="get_zip">
+				</td>
+				<td> <input type="button" value="Get Weather" onclick="getWeather();" />
+				</td>
+				<td> <input type="reset" value="Clear" />
+				</td>
+
+			</tr>
+			</table>
+
+			<div> <textarea id="ziparea" rows="10" cols="50"></textarea>
+			</div>
+		
+
+	</form>
+
+
+<script>
+ var requestObj= null;
+
+ function getWeather(){
+	var zipcode = document.getElementById("get_zip").value;
+	var weatherURL = "http://web.stanford.edu/~psyoung/cgi-bin/a3.php?yws_path="
+	+ encodeURIComponent("p=" + zipcode);
+
+    console.log(weatherURL);
+	// weatherURL = "http://web.stanford.edu/~psyoung/cgi-bin/a3.php?yws_path=p%3D94305";
+	requestObj = new XMLHttpRequest();
+
+    requestObj.addEventListener("load",processWeather,false);
+	requestObj.open('GET', weatherURL, true);
+	requestObj.send(null); 
+ }
+
+ function setTextArea( newValue ){
+	var old_text = document.getElementById("ziparea").value;
+	var new_text;
+	if ( old_text == "" ){ 
+		new_text = newValue;
+	}
+	else{
+		new_text = old_text + "\n" + newValue;
+	}
+	document.getElementById("ziparea").value = new_text;
+ }
+
+ function processWeather(){
+	var locations = requestObj.responseXML.getElementsByTagName("location");
+	var conditions = requestObj.responseXML.getElementsByTagName("condition");
+	if (locations.length==0 && conditions.length==0 ){
+		locations = requestObj.responseXML.getElementsByTagName("yweather:location");
+		conditions = requestObj.responseXML.getElementsByTagName("yweather:condition");
+	}
+	console.log(locations[0]);
+	console.log(conditions[0]);
+	var newHTML;
+		var a = locations[0].getAttribute("city");
+		console.log(a);
+		var b = conditions[0].getAttribute("temp");
+		console.log(b);
+		var c = conditions[0].getAttribute("text");
+		newHTML = a + ":" + b + "," + c ;
+	    
+	setTextArea(newHTML);
+ }
+	</script>			
+</body>
+</html>
